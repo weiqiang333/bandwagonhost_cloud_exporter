@@ -1,0 +1,9 @@
+bandwagonhost:
+  getinfo_url: https://api.64clouds.com/v1/getServiceInfo
+  server_api_key:
+    - address: 1.2.3.6
+      veid: 12345678
+      key: private_xxxxxxxxx
+    - address: 2.3.6.9
+      veid: 12345678
+      key: private_xxxxxxxxx
