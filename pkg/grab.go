@@ -11,6 +11,29 @@ import (
 	"github.com/spf13/viper"
 )
 
+type ServerInfo struct {
+	VmType                string   `json:"vm_type"`
+	Hostname              string   `json:"hostname"`
+	Nodeip                string   `json:"node_ip"`
+	IpAddresses           []string `json:"ip_addresses"`
+	NodeLocation          string   `json:"node_location"`
+	MonthlyDataMultiplier float64  `json:"monthly_data_multiplier"`
+	PlanMonthlyData       float64  `json:"plan_monthly_data"`
+	DataCounter           float64  `json:"data_counter"`
+	PlanMonthlyDataGb     float64  `json:"plan_monthly_data_gb"`
+	DataCounterGb         float64  `json:"data_counter_gb"`
+	AvailableTrafficGb    float64  `json:"available_traffic_gb"`
+	PlanRam               float64  `json:"plan_ram"`
+	PlanDisk              float64  `json:"plan_disk"`
+	PlanRamGb             float64  `json:"plan_ram_gb"`
+	PlanDiskGb            float64  `json:"plan_disk_gb"`
+	OS                    string   `json:"os"`
+	DataNextReset         float64  `json:"data_next_reset"`
+	Suspended             bool     `json:"suspended"`
+	Error                 float64  `json:"error"`
+	Message               string   `json:"message"`
+}
+
 func getUrl() (urls []string, err error) {
 	getinfoUrl := viper.GetString("bandwagonhost.getinfo_url")
 	serverApiKeys, ok := viper.Get("bandwagonhost.server_api_key").([]interface{})
@@ -25,29 +48,21 @@ func getUrl() (urls []string, err error) {
 	return urls, nil
 }
 
-func createData(infoMap map[string]interface{}) map[string]interface{} {
-	monthly_data_multiplier := infoMap["monthly_data_multiplier"].(float64)
-	plan_monthly_data := infoMap["plan_monthly_data"].(float64) * monthly_data_multiplier
-	data_counter := infoMap["data_counter"].(float64) * monthly_data_multiplier
+func createData(infoMap ServerInfo) ServerInfo {
+	plan_monthly_data := infoMap.PlanMonthlyData * infoMap.MonthlyDataMultiplier
+	data_counter := infoMap.DataCounter * infoMap.MonthlyDataMultiplier
 	plan_monthly_data_gb := formatSizeConversion(plan_monthly_data)
 	data_counter_gb := formatSizeConversion(data_counter)
 	available_traffic_gb := formatSizeConversion(plan_monthly_data - data_counter)
-	plan_ram_gb := formatSizeConversion(infoMap["plan_ram"].(float64))
-	plan_disk_gb := formatSizeConversion(infoMap["plan_disk"].(float64))
-	return map[string]interface{}{
-		"vm_type":              infoMap["vm_type"].(string),
-		"hostname":             infoMap["hostname"].(string),
-		"node_ip":              infoMap["node_ip"].(string),
-		"node_location":        infoMap["node_location"].(string),
-		"plan_monthly_data_gb": plan_monthly_data_gb,
-		"data_counter_gb":      data_counter_gb,
-		"available_traffic_gb": available_traffic_gb,
-		"plan_ram_gb":          plan_ram_gb,
-		"plan_disk_gb":         plan_disk_gb,
-		"os":                   infoMap["os"].(string),
-		"data_next_reset":      infoMap["data_next_reset"].(float64),
-		"suspended":            infoMap["suspended"].(bool),
-	}
+	plan_ram_gb := formatSizeConversion(infoMap.PlanRam)
+	plan_disk_gb := formatSizeConversion(infoMap.PlanDisk)
+
+	infoMap.PlanMonthlyDataGb = plan_monthly_data_gb
+	infoMap.DataCounterGb = data_counter_gb
+	infoMap.AvailableTrafficGb = available_traffic_gb
+	infoMap.PlanRamGb = plan_ram_gb
+	infoMap.PlanDiskGb = plan_disk_gb
+	return infoMap
 }
 
 // formatSizeConversion: bytes -> GB
@@ -60,27 +75,31 @@ func formatSizeConversion(size float64) float64 {
 // plan_monthly_data: 每月可用流量 (bytes), 基于 monthly_data_multiplier 系数.
 // data_counter: 当月已用流量 (bytes), 基于 monthly_data_multiplier 系数.
 // monthly_data_multiplier: 宽带流量计费系数, 与此相乘.
-func GrabBwgServerInfo() ([]map[string]interface{}, error) {
-	var infoMaps []map[string]interface{}
+func GrabBwgServerInfo() ([]ServerInfo, error) {
+	var infoMaps []ServerInfo
 	urls, err := getUrl()
 	if err != nil {
-		fmt.Println("failed in GrabBwgServerInfo:", err.Error())
+		fmt.Println("failed in GrabBwgServerInfo: ", err.Error())
 		return infoMaps, fmt.Errorf("faile in GrabBwgServerInfo: %w", err)
 	}
 	for _, url := range urls {
 		client := http.Client{
-			Timeout: 2 * time.Second,
+			Timeout: 3 * time.Second,
 		}
 		resp, err := client.Get(url)
-		defer resp.Body.Close()
 		if err != nil {
-			fmt.Println("failed in GrabBwgServerInfo: %w", err.Error())
+			fmt.Println("failed in GrabBwgServerInfo: ", err.Error())
 			continue
 		}
-		body, _ := ioutil.ReadAll(resp.Body)
-		var infoMap map[string]interface{}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		var infoMap ServerInfo
 		if err := json.Unmarshal(body, &infoMap); err != nil {
-			fmt.Println("failed in GrabBwgServerInfo json Unmarshal: %w", err.Error())
+			fmt.Println("failed in GrabBwgServerInfo json Unmarshal: ", err.Error(), string(body))
+			continue
+		}
+		if infoMap.Error != 0 {
+			fmt.Printf("failed in GrabBwgServerInfo body error code %v error message %v\n", infoMap.Error, infoMap.Message)
 			continue
 		}
 		newInfoMap := createData(infoMap)
