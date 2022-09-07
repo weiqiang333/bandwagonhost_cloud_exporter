@@ -1,0 +1,39 @@
+# HELP available_traffic_gb 剩余可用流量 (GB)
+# TYPE available_traffic_gb gauge
+available_traffic_gb{ip_address="178.157.62.33"} 398.14
+available_traffic_gb{ip_address="216.24.179.33"} -1.88
+
+# HELP data_counter 当月已用流量 (bytes)
+# TYPE data_counter gauge
+data_counter{ip_address="178.157.62.33"} 6.4623787534e+11
+data_counter{ip_address="216.24.179.33"} 1.07576217465e+12
+
+# HELP data_counter_gb 当月已用流量 (GB)
+# TYPE data_counter_gb gauge
+data_counter_gb{ip_address="178.157.62.33"} 601.86
+data_counter_gb{ip_address="216.24.179.33"} 1001.88
+
+# HELP data_next_reset 流量计数器重置的日期和时间（UNIX 时间戳）
+# TYPE data_next_reset gauge
+data_next_reset{ip_address="178.157.62.33"} 1.664940206e+09
+data_next_reset{ip_address="216.24.179.33"} 1.662861284e+09
+
+# HELP monthly_data_multiplier 宽带流量计费系数
+# TYPE monthly_data_multiplier gauge
+monthly_data_multiplier{ip_address="178.157.62.33"} 1
+monthly_data_multiplier{ip_address="216.24.179.33"} 1
+
+# HELP node_suspended server run status value, Running=0 / Suspended=1
+# TYPE node_suspended gauge
+node_suspended{hostname="hot-byte-1.localdomain",ip_address="216.24.179.33",node_ip="162.244.241.103",node_location="US, California",os="debian-10-x86_64",vm_type="kvm"} 1
+node_suspended{hostname="jpbw13.178.157.62.33",ip_address="178.157.62.33",node_ip="69.171.64.110",node_location="Osaka",os="debian-11-x86_64",vm_type="kvm"} 0
+
+# HELP plan_monthly_data 每月可用流量 (bytes)
+# TYPE plan_monthly_data gauge
+plan_monthly_data{ip_address="178.157.62.33"} 1.073741824e+12
+plan_monthly_data{ip_address="216.24.179.33"} 1.073741824e+12
+
+# HELP plan_monthly_data_gb 每月可用流量 (GB)
+# TYPE plan_monthly_data_gb gauge
+plan_monthly_data_gb{ip_address="178.157.62.33"} 1000
+plan_monthly_data_gb{ip_address="216.24.179.33"} 1000
