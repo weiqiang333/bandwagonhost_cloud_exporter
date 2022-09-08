@@ -1,0 +1,17 @@
+[Unit]
+Description=bandwagonhost_cloud_exporter Server
+After=network.target
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/usr/local/bandwagonhost_cloud_exporter/
+ExecStart=/usr/local/bandwagonhost_cloud_exporter/bandwagonhost_cloud_exporter \
+    --config.file /usr/local/bandwagonhost_cloud_exporter/config/bandwagonhost_cloud_exporter.yaml
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

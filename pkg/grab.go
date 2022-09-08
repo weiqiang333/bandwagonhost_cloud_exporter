@@ -99,7 +99,7 @@ func GrabBwgServerInfo() ([]ServerInfo, error) {
 			continue
 		}
 		if infoMap.Error != 0 {
-			fmt.Printf("failed in GrabBwgServerInfo body error code %v error message %v\n", infoMap.Error, infoMap.Message)
+			fmt.Printf("failed in GrabBwgServerInfo body error code %v error message %v, url %s\n", infoMap.Error, infoMap.Message, url)
 			continue
 		}
 		newInfoMap := createData(infoMap)

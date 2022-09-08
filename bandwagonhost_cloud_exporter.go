@@ -39,37 +39,37 @@ func NewExporter() *Exporter {
 			prometheus.GaugeOpts{
 				Name: "plan_monthly_data",
 				Help: "每月可用流量 (bytes)",
-			}, []string{"ip_address"}),
+			}, []string{"ip_address", "hostname"}),
 		PlanMonthlyDataGb: *prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
 				Name: "plan_monthly_data_gb",
 				Help: "每月可用流量 (GB)",
-			}, []string{"ip_address"}),
+			}, []string{"ip_address", "hostname"}),
 		MonthlyDataMultiplier: *prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
 				Name: "monthly_data_multiplier",
 				Help: "宽带流量计费系数",
-			}, []string{"ip_address"}),
+			}, []string{"ip_address", "hostname"}),
 		DataCounter: *prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
 				Name: "data_counter",
 				Help: "当月已用流量 (bytes)",
-			}, []string{"ip_address"}),
+			}, []string{"ip_address", "hostname"}),
 		DataCounterGb: *prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
 				Name: "data_counter_gb",
 				Help: "当月已用流量 (GB)",
-			}, []string{"ip_address"}),
+			}, []string{"ip_address", "hostname"}),
 		AvailableTrafficGb: *prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
 				Name: "available_traffic_gb",
 				Help: "剩余可用流量 (GB)",
-			}, []string{"ip_address"}),
+			}, []string{"ip_address", "hostname"}),
 		DataNextReset: *prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
 				Name: "data_next_reset",
 				Help: "流量计数器重置的日期和时间（UNIX 时间戳）",
-			}, []string{"ip_address"}),
+			}, []string{"ip_address", "hostname"}),
 	}
 }
 
@@ -103,13 +103,13 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			"node_location": infoMap.NodeLocation,
 			"os":            infoMap.OS,
 		}).Set(nodeSuspendedCode)
-		e.PlanMonthlyData.WithLabelValues(infoMap.IpAddresses[0]).Set(infoMap.PlanMonthlyData)
-		e.PlanMonthlyDataGb.WithLabelValues(infoMap.IpAddresses[0]).Set(infoMap.PlanMonthlyDataGb)
-		e.MonthlyDataMultiplier.WithLabelValues(infoMap.IpAddresses[0]).Set(infoMap.MonthlyDataMultiplier)
-		e.DataCounter.WithLabelValues(infoMap.IpAddresses[0]).Set(infoMap.DataCounter)
-		e.DataCounterGb.WithLabelValues(infoMap.IpAddresses[0]).Set(infoMap.DataCounterGb)
-		e.AvailableTrafficGb.WithLabelValues(infoMap.IpAddresses[0]).Set(infoMap.AvailableTrafficGb)
-		e.DataNextReset.WithLabelValues(infoMap.IpAddresses[0]).Set(infoMap.DataNextReset)
+		e.PlanMonthlyData.WithLabelValues(infoMap.IpAddresses[0], infoMap.Hostname).Set(infoMap.PlanMonthlyData)
+		e.PlanMonthlyDataGb.WithLabelValues(infoMap.IpAddresses[0], infoMap.Hostname).Set(infoMap.PlanMonthlyDataGb)
+		e.MonthlyDataMultiplier.WithLabelValues(infoMap.IpAddresses[0], infoMap.Hostname).Set(infoMap.MonthlyDataMultiplier)
+		e.DataCounter.WithLabelValues(infoMap.IpAddresses[0], infoMap.Hostname).Set(infoMap.DataCounter)
+		e.DataCounterGb.WithLabelValues(infoMap.IpAddresses[0], infoMap.Hostname).Set(infoMap.DataCounterGb)
+		e.AvailableTrafficGb.WithLabelValues(infoMap.IpAddresses[0], infoMap.Hostname).Set(infoMap.AvailableTrafficGb)
+		e.DataNextReset.WithLabelValues(infoMap.IpAddresses[0], infoMap.Hostname).Set(infoMap.DataNextReset)
 	}
 	e.NodeSuspended.Collect(ch)
 	e.PlanMonthlyData.Collect(ch)
@@ -126,6 +126,7 @@ func main() {
 	if err := viper.BindPFlags(pflag.CommandLine); err != nil {
 		fmt.Println("Fatal error BindPFlags: %w", err.Error())
 	}
+	fmt.Println("load config file ", viper.GetString("config.file"))
 	viper.SetConfigType("yaml")
 	viper.SetConfigFile(viper.GetString("config.file"))
 	if err := viper.ReadInConfig(); err != nil {
@@ -134,6 +135,7 @@ func main() {
 
 	prometheus.MustRegister(NewExporter())
 	// http server
+	fmt.Printf("http server start, address %s/metrics\n", viper.GetString("exporter.address"))
 	http.Handle("/metrics", promhttp.Handler())
 	if err := http.ListenAndServe(viper.GetString("exporter.address"), nil); err != nil {
 		fmt.Println("Fatal error http: %w", err)

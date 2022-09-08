@@ -6,10 +6,12 @@ Mertrics api exposing bandwagonhost server information. [mertrics example](./doc
 ## usage
 Example
 ```
+wget https://github.com/weiqiang333/bandwagonhost_cloud_exporter/releases/download/v0.1/bandwagonhost_cloud_exporter-v0.1-linux-amd64.tar.gz
 mkdir /usr/local/bandwagonhost_cloud_exporter
 tar -zxf bandwagonhost_cloud_exporter-linux-amd64.tar.gz -C /usr/local/bandwagonhost_cloud_exporter
-/usr/local/bandwagonhost_cloud_exporter --config /usr/local/config/bandwagonhost_cloud_exporter.yaml
-    # Don't forget to modify your config file /usr/local/config/bandwagonhost_cloud_exporter.yaml
+chmod +x /usr/local/bandwagonhost_cloud_exporter/bandwagonhost_cloud_exporter
+/usr/local/bandwagonhost_cloud_exporter/bandwagonhost_cloud_exporter --config.file /usr/local/bandwagonhost_cloud_exporter/config/bandwagonhost_cloud_exporter.yaml
+    # Don't forget to modify your config file /usr/local/bandwagonhost_cloud_exporter/config/bandwagonhost_cloud_exporter.yaml
 ```
 Flags
 ```
