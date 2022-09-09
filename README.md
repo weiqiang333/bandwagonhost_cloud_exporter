@@ -21,6 +21,11 @@ Flags
 
 ---
 ## prometheus
-
+query prometheus.
+![case](./doc/img/prometheus.png)
 
 ## grafana
+The following [Dashboard template](./doc/data/grafana.json), can be imported into grafana to get an basic dashboard.
+
+Example:
+![case](./doc/img/grafana.png)
