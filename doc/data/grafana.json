@@ -331,7 +331,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 9,
+        "w": 12,
         "x": 8,
         "y": 1
       },
@@ -671,7 +671,7 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 9,
+        "w": 12,
         "x": 8,
         "y": 9
       },
@@ -810,7 +810,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 225
+                "value": 303
               }
             ]
           },
@@ -822,7 +822,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 157
+                "value": 265
               }
             ]
           },
@@ -865,12 +865,24 @@
                 "value": "剩余可用流量"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cloud Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 338
+              }
+            ]
           }
         ]
       },
       "gridPos": {
-        "h": 6,
-        "w": 8,
+        "h": 8,
+        "w": 16,
         "x": 0,
         "y": 16
       },
@@ -1003,7 +1015,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 138
+                "value": 209
               }
             ]
           },
@@ -1015,17 +1027,17 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 203
+                "value": 275
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 6,
-        "w": 5,
-        "x": 8,
-        "y": 16
+        "h": 8,
+        "w": 9,
+        "x": 0,
+        "y": 24
       },
       "id": 20,
       "options": {
@@ -1183,10 +1195,10 @@
         ]
       },
       "gridPos": {
-        "h": 6,
-        "w": 4,
-        "x": 13,
-        "y": 16
+        "h": 8,
+        "w": 7,
+        "x": 9,
+        "y": 24
       },
       "id": 22,
       "options": {
@@ -1241,6 +1253,6 @@
   "timezone": "",
   "title": "Cloud 服务器",
   "uid": "M6l5iJM4k",
-  "version": 20,
+  "version": 22,
   "weekStart": ""
 }
