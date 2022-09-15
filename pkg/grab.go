@@ -93,7 +93,7 @@ func GrabBwgServerInfo() ([]ServerInfo, error) {
 		}
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
-		var infoMap ServerInfo
+		infoMap := ServerInfo{}
 		if err := json.Unmarshal(body, &infoMap); err != nil {
 			fmt.Println("failed in GrabBwgServerInfo json Unmarshal: ", err.Error(), string(body))
 			continue
