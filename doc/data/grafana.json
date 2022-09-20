@@ -573,7 +573,7 @@
             "uid": "mk6_e0M4z"
           },
           "editorMode": "builder",
-          "expr": "sum(available_traffic_gb{hostname=~\"jp.*\"})",
+          "expr": "sum(available_traffic_gb{hostname=~\"jp.*\"} > 0)",
           "hide": false,
           "legendFormat": "JP",
           "range": true,
@@ -585,7 +585,7 @@
             "uid": "mk6_e0M4z"
           },
           "editorMode": "builder",
-          "expr": "sum(available_traffic_gb{hostname=~\"us.*\"})",
+          "expr": "sum(available_traffic_gb{hostname=~\"us.*\"} > 0)",
           "hide": false,
           "legendFormat": "US",
           "range": true,
@@ -1477,6 +1477,6 @@
   "timezone": "",
   "title": "Cloud 服务器",
   "uid": "M6l5iJM4k",
-  "version": 44,
+  "version": 45,
   "weekStart": ""
 }
