@@ -85,6 +85,15 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
+	e.NodeSuspended.Reset()
+	e.PlanMonthlyData.Reset()
+	e.PlanMonthlyDataGb.Reset()
+	e.MonthlyDataMultiplier.Reset()
+	e.DataCounter.Reset()
+	e.DataCounterGb.Reset()
+	e.AvailableTrafficGb.Reset()
+	e.DataNextReset.Reset()
+
 	infoMaps, err := pkg.GrabBwgServerInfo()
 	if err != nil {
 		fmt.Println(err.Error())
