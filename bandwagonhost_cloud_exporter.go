@@ -85,15 +85,6 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
-	e.NodeSuspended.Reset()
-	e.PlanMonthlyData.Reset()
-	e.PlanMonthlyDataGb.Reset()
-	e.MonthlyDataMultiplier.Reset()
-	e.DataCounter.Reset()
-	e.DataCounterGb.Reset()
-	e.AvailableTrafficGb.Reset()
-	e.DataNextReset.Reset()
-
 	infoMaps, err := pkg.GrabBwgServerInfo()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -104,6 +95,33 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		if infoMap.Suspended {
 			nodeSuspendedCode = 1
 		}
+		// 确定资源更新后的唯一性， 以 ip_address label 为准
+		// 这里没有使用 reset() 方法，是为了避免因为网络问题导致个别 serverInfo 未获取到，数据的波动性.
+		e.NodeSuspended.DeletePartialMatch(prometheus.Labels{
+			"ip_address": infoMap.IpAddresses[0],
+		})
+		e.PlanMonthlyData.DeletePartialMatch(prometheus.Labels{
+			"ip_address": infoMap.IpAddresses[0],
+		})
+		e.PlanMonthlyDataGb.DeletePartialMatch(prometheus.Labels{
+			"ip_address": infoMap.IpAddresses[0],
+		})
+		e.MonthlyDataMultiplier.DeletePartialMatch(prometheus.Labels{
+			"ip_address": infoMap.IpAddresses[0],
+		})
+		e.DataCounter.DeletePartialMatch(prometheus.Labels{
+			"ip_address": infoMap.IpAddresses[0],
+		})
+		e.DataCounterGb.DeletePartialMatch(prometheus.Labels{
+			"ip_address": infoMap.IpAddresses[0],
+		})
+		e.AvailableTrafficGb.DeletePartialMatch(prometheus.Labels{
+			"ip_address": infoMap.IpAddresses[0],
+		})
+		e.DataNextReset.DeletePartialMatch(prometheus.Labels{
+			"ip_address": infoMap.IpAddresses[0],
+		})
+
 		e.NodeSuspended.With(prometheus.Labels{
 			"ip_address":    infoMap.IpAddresses[0],
 			"node_ip":       infoMap.Nodeip,
