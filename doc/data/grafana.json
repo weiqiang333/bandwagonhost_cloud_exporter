@@ -1,4 +1,47 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.1.3"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -24,7 +67,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 3,
+  "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -44,8 +87,9 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "mk6_e0M4z"
+        "uid": "${DS_PROMETHEUS}"
       },
+      "description": "节点总数。数量如有对不上，请查看匹配规则.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -76,6 +120,12 @@
               {
                 "id": "unit",
                 "value": "台"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "palette-classic"
+                }
               }
             ]
           }
@@ -92,7 +142,7 @@
         "displayMode": "lcd",
         "minVizHeight": 10,
         "minVizWidth": 0,
-        "orientation": "auto",
+        "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -108,11 +158,11 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "editorMode": "builder",
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "count(node_suspended)",
+          "expr": "count(last_over_time(node_suspended[20m])) + count(last_over_time(vollcloud_node_online[20m]))",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -123,7 +173,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "builder",
           "expr": "count(node_suspended{hostname=~\"jp.*\"})",
@@ -135,7 +185,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "builder",
           "expr": "count(node_suspended{hostname=~\"us.*\"})",
@@ -143,6 +193,18 @@
           "legendFormat": "US - 节点总数",
           "range": true,
           "refId": "US - 节点总数"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "builder",
+          "expr": "count(vollcloud_node_online{hostname=~\".*hk.*\"})",
+          "hide": false,
+          "legendFormat": "HK - 节点总数",
+          "range": true,
+          "refId": "HK - 节点总数"
         }
       ],
       "title": "节点总数",
@@ -151,7 +213,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "mk6_e0M4z"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -183,6 +245,12 @@
               {
                 "id": "unit",
                 "value": "GB"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
               }
             ]
           }
@@ -196,7 +264,7 @@
       },
       "id": 6,
       "options": {
-        "displayMode": "lcd",
+        "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
         "orientation": "auto",
@@ -215,7 +283,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "builder",
           "exemplar": false,
@@ -230,7 +298,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "builder",
           "expr": "sum(plan_monthly_data_gb{hostname=~\"jp.*\"})",
@@ -242,7 +310,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "builder",
           "expr": "sum(plan_monthly_data_gb{hostname=~\"us.*\"})",
@@ -250,6 +318,18 @@
           "legendFormat": "US - 流量总数 GB",
           "range": true,
           "refId": "US - 流量总数 GB"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "builder",
+          "expr": "sum(vollcloud_bandwidth_total_GB{hostname=~\"cn-hk.*\"})",
+          "hide": false,
+          "legendFormat": "HK - 流量总数 GB",
+          "range": true,
+          "refId": "HK - 流量总数 GB"
         }
       ],
       "title": "流量总数",
@@ -258,7 +338,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "mk6_e0M4z"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "流量使用趋势，统计的每个服务器的当月流量使用总和。流量清零日会出现断崖式。新采购服务器会出现流量峰值上调",
       "fieldConfig": {
@@ -331,7 +411,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 8,
         "x": 8,
         "y": 1
       },
@@ -352,35 +432,25 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
-          },
-          "editorMode": "builder",
-          "expr": "sum(plan_monthly_data_gb)",
-          "hide": true,
-          "legendFormat": "流量峰值",
-          "range": true,
-          "refId": "流量峰值"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(data_counter_gb{hostname=~\"$region.*\"})",
+          "exemplar": false,
+          "expr": "sum(last_over_time(data_counter_gb{hostname=~\"$region.*\"}[10m])) + sum(last_over_time(vollcloud_bandwidth_used_GB{hostname=~\"$region.*\"}[10m]))",
           "format": "time_series",
+          "instant": false,
           "legendFormat": "使用流量",
           "range": true,
           "refId": "使用流量"
         }
       ],
-      "title": "当月 流量使用趋势",
+      "title": "当月 流量使用趋势 - 总计",
       "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "mk6_e0M4z"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -397,7 +467,7 @@
               },
               {
                 "color": "green",
-                "value": 5
+                "value": 2
               }
             ]
           }
@@ -412,6 +482,12 @@
               {
                 "id": "unit",
                 "value": "台"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "palette-classic"
+                }
               }
             ]
           }
@@ -425,7 +501,7 @@
       },
       "id": 2,
       "options": {
-        "displayMode": "basic",
+        "displayMode": "lcd",
         "minVizHeight": 10,
         "minVizWidth": 0,
         "orientation": "horizontal",
@@ -444,7 +520,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "builder",
           "exemplar": false,
@@ -459,7 +535,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -475,7 +551,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "count(node_suspended{hostname=~\"us.*\"}==0)",
@@ -483,6 +559,18 @@
           "legendFormat": "US",
           "range": true,
           "refId": "US 可用节点数"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "count(vollcloud_bandwidth_total_GB{hostname=~\"cn-hk.*\"}==0)",
+          "hide": false,
+          "legendFormat": "HK",
+          "range": true,
+          "refId": "HK"
         }
       ],
       "title": "可用节点数",
@@ -491,7 +579,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "mk6_e0M4z"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -555,22 +643,22 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "editorMode": "builder",
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(available_traffic_gb)",
+          "expr": "sum(last_over_time(available_traffic_gb[10m])) + sum(last_over_time(vollcloud_bandwidth_total_GB[10m]))",
           "format": "time_series",
           "instant": false,
           "interval": "",
-          "legendFormat": "可用流量总数 GB",
+          "legendFormat": "总计",
           "range": true,
           "refId": "可用流量总数 GB"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "builder",
           "expr": "sum(available_traffic_gb{hostname=~\"jp.*\"} > 0)",
@@ -582,7 +670,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "builder",
           "expr": "sum(available_traffic_gb{hostname=~\"us.*\"} > 0)",
@@ -590,6 +678,18 @@
           "legendFormat": "US",
           "range": true,
           "refId": "US - 可用流量 GB"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "builder",
+          "expr": "sum(vollcloud_bandwidth_free_GB{hostname=~\"cn-hk.*\"}) > 0",
+          "hide": false,
+          "legendFormat": "CN-HK",
+          "range": true,
+          "refId": "CN-HK"
         }
       ],
       "title": "流量总数",
@@ -598,7 +698,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "mk6_e0M4z"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "当月 剩余流量趋势，统计的每个服务器的当月流量剩余总和。流量清零日会出现断崖式上下。",
       "fieldConfig": {
@@ -671,7 +771,7 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 12,
+        "w": 8,
         "x": 8,
         "y": 9
       },
@@ -692,22 +792,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
-          },
-          "editorMode": "builder",
-          "expr": "sum(plan_monthly_data_gb)",
-          "hide": true,
-          "legendFormat": "流量峰值",
-          "range": true,
-          "refId": "流量峰值"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(available_traffic_gb{hostname=~\"$region.*\"})",
+          "expr": "sum(last_over_time(available_traffic_gb{hostname=~\"$region.*\"}[10m])) + sum(last_over_time(vollcloud_bandwidth_free_GB{hostname=~\"$region.*\"}[10m]))",
           "format": "time_series",
           "legendFormat": "剩余流量",
           "range": true,
@@ -733,7 +821,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "mk6_e0M4z"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "所有服务器剩余流量 GB",
       "fieldConfig": {
@@ -751,12 +839,12 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "red",
                 "value": null
               },
               {
-                "color": "red",
-                "value": 80
+                "color": "green",
+                "value": 100
               }
             ]
           }
@@ -777,28 +865,48 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "__name__"
+              "options": "Value #剩余流量详情"
             },
             "properties": [
               {
-                "id": "custom.hidden",
-                "value": true
+                "id": "displayName",
+                "value": "剩余流量"
               },
               {
-                "id": "custom.width",
-                "value": 30
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "green",
+                      "value": 100
+                    },
+                    {
+                      "color": "dark-green",
+                      "value": 600
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-text"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "instance"
+              "options": "Value #流量总计"
             },
             "properties": [
               {
-                "id": "custom.hidden",
-                "value": true
+                "id": "displayName",
+                "value": "流量套餐总计"
               }
             ]
           },
@@ -809,8 +917,8 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 303
+                "id": "custom.filterable",
+                "value": true
               }
             ]
           },
@@ -821,68 +929,16 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 265
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "job"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 188
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "job"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Cloud Name"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "GB"
-              },
-              {
-                "id": "displayName",
-                "value": "剩余可用流量"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Cloud Name"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 338
+                "id": "custom.filterable",
+                "value": true
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 16,
+        "h": 11,
+        "w": 8,
         "x": 0,
         "y": 16
       },
@@ -899,7 +955,7 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "剩余可用流量"
+            "displayName": "剩余流量"
           }
         ]
       },
@@ -908,25 +964,47 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "last_over_time(available_traffic_gb{hostname=~\"$region.*\"}[60m])",
+          "expr": "max(last_over_time(available_traffic_gb{hostname=~\"$region.*\"}[30m])) by (hostname, ip_address) or max(last_over_time(vollcloud_bandwidth_free_GB{hostname=~\"$region.*\"}[30m])) by (hostname, ip_address)",
           "format": "table",
+          "hide": false,
           "instant": true,
-          "legendFormat": "剩余流量详情",
+          "legendFormat": "__auto",
           "range": false,
           "refId": "剩余流量详情"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "max(last_over_time(vollcloud_bandwidth_total_GB{hostname=~\"$region.*\"}[30m])) by (hostname, ip_address) or max(last_over_time(plan_monthly_data_gb{hostname=~\"$region.*\"}[30m])) by (hostname, ip_address)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "流量总计"
         }
       ],
       "title": "剩余流量详情 GB",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        }
+      ],
       "type": "table"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "mk6_e0M4z"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "节点流量释放预算时间",
       "fieldConfig": {
@@ -958,7 +1036,19 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Value"
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #A"
             },
             "properties": [
               {
@@ -974,144 +1064,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "instance"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "job"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "ip_address"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 209
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "hostname"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 275
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 9,
-        "x": 0,
-        "y": 24
-      },
-      "id": 20,
-      "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": false,
-            "displayName": "未来释放时间"
-          }
-        ]
-      },
-      "pluginVersion": "9.1.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mk6_e0M4z"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "last_over_time(data_next_reset{hostname=~\"$region.*\"}[30m]) * 1000",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "节点流量释放时间",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mk6_e0M4z"
-      },
-      "description": "节点流量释放预算时间",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "auto",
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
+              "options": "Value #B"
             },
             "properties": [
               {
@@ -1121,41 +1074,37 @@
               {
                 "id": "unit",
                 "value": "s"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "green",
+                      "value": 172800
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-text"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Time"
+              "options": "hostname"
             },
             "properties": [
               {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "instance"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "job"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
+                "id": "custom.filterable",
                 "value": true
               }
             ]
@@ -1167,40 +1116,20 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 138
-              },
-              {
-                "id": "custom.hidden",
+                "id": "custom.filterable",
                 "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "hostname"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 226
-              },
-              {
-                "id": "custom.hidden",
-                "value": false
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 7,
-        "x": 9,
-        "y": 24
+        "h": 11,
+        "w": 8,
+        "x": 8,
+        "y": 16
       },
-      "id": 22,
+      "id": 20,
       "options": {
         "footer": {
           "fields": "",
@@ -1222,207 +1151,40 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "last_over_time(data_next_reset{hostname=~\"$region.*\"}[30m]) - time()",
+          "expr": "max(last_over_time(data_next_reset{hostname=~\"$region.*\"}[30m]) * 1000) by (hostname, ip_address)",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
           "refId": "A"
-        }
-      ],
-      "title": "节点流量释放时间",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mk6_e0M4z"
-      },
-      "description": "流量套餐详情",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "center",
-            "displayMode": "auto",
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "__name__"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              },
-              {
-                "id": "custom.width",
-                "value": 30
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "instance"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "hostname"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 303
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "ip_address"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 265
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "job"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 188
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "job"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Cloud Name"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "GB"
-              },
-              {
-                "id": "displayName",
-                "value": "流量套餐含量"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Cloud Name"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 338
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 16,
-        "x": 0,
-        "y": 32
-      },
-      "id": 24,
-      "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "9.1.3",
-      "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "mk6_e0M4z"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "editorMode": "builder",
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "last_over_time(plan_monthly_data_gb{hostname=~\"$region.*\"}[60m])",
+          "expr": "sort_desc(max(last_over_time(data_next_reset{hostname=~\"$region.*\"}[30m]) - time()) by (hostname, ip_address))",
           "format": "table",
+          "hide": false,
           "instant": true,
-          "legendFormat": "流量套餐详情",
+          "legendFormat": "__auto",
           "range": false,
-          "refId": "流量套餐详情"
+          "refId": "B"
         }
       ],
-      "title": "流量套餐详情",
+      "title": "节点流量释放时间",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        }
+      ],
       "type": "table"
     }
   ],
@@ -1460,9 +1222,14 @@
             "selected": false,
             "text": "us",
             "value": "us"
+          },
+          {
+            "selected": false,
+            "text": "cn-hk",
+            "value": "cn-hk"
           }
         ],
-        "query": "jp,us",
+        "query": "jp,us,cn-hk",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
@@ -1477,6 +1244,6 @@
   "timezone": "",
   "title": "Cloud 服务器",
   "uid": "M6l5iJM4k",
-  "version": 45,
+  "version": 6,
   "weekStart": ""
 }
