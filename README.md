@@ -6,9 +6,10 @@ Mertrics api exposing bandwagonhost server information. [mertrics example](./doc
 ## usage
 Example
 ```
-wget https://github.com/weiqiang333/bandwagonhost_cloud_exporter/releases/download/v0.1/bandwagonhost_cloud_exporter-v0.1-linux-amd64.tar.gz
+version=v0.1
+wget https://github.com/weiqiang333/bandwagonhost_cloud_exporter/releases/download/${version}/bandwagonhost_cloud_exporter-linux-amd64-${version}.tar.gz
 mkdir /usr/local/bandwagonhost_cloud_exporter
-tar -zxf bandwagonhost_cloud_exporter-linux-amd64.tar.gz -C /usr/local/bandwagonhost_cloud_exporter
+tar -zxf bandwagonhost_cloud_exporter-linux-amd64-${version}.tar.gz -C /usr/local/bandwagonhost_cloud_exporter
 chmod +x /usr/local/bandwagonhost_cloud_exporter/bandwagonhost_cloud_exporter
 /usr/local/bandwagonhost_cloud_exporter/bandwagonhost_cloud_exporter --config.file /usr/local/bandwagonhost_cloud_exporter/config/bandwagonhost_cloud_exporter.yaml
     # Don't forget to modify your config file /usr/local/bandwagonhost_cloud_exporter/config/bandwagonhost_cloud_exporter.yaml
@@ -27,11 +28,26 @@ Flags
 
 ---
 ## prometheus
-query prometheus.
+- config prometheus.yml
+```yaml
+scrape_configs:
+  - job_name: bandwagonhost_cloud
+    honor_timestamps: true
+    scrape_interval: 15m
+    scrape_timeout: 30s
+    metrics_path: /metrics
+    scheme: http
+    follow_redirects: true
+    enable_http2: true
+    static_configs:
+      - targets:
+          - localhost:9103
+```
+- query prometheus. [mertrics example](./doc/mertrics_example)
 ![case](./doc/img/prometheus.png)
 
 ## grafana
 The following [Dashboard template](./doc/data/grafana.json), can be imported into grafana to get an basic dashboard.
 
 Example:
-![case](./doc/img/grafana.png)
+![case](./doc/img/grafana-Cloud.png)
